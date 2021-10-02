@@ -1,6 +1,7 @@
 package br.com.otero.personalcredit.controller;
 
 
+import br.com.otero.personalcredit.model.ClienteEValorPedido;
 import br.com.otero.personalcredit.model.ClienteResponse;
 import br.com.otero.personalcredit.service.ClienteService;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,12 @@ public class ClienteController {
         return ResponseEntity.ok().body(busca);
 
     }
+    @GetMapping("/{nome}/{valorPedidoEmprestimo}")
+    ResponseEntity<ClienteEValorPedido> clienteEValorPedido(@PathVariable String nome, @PathVariable Integer valorPedidoEmprestimo){
 
+
+        return ResponseEntity.ok(this.clienteService.emprestimo(nome,valorPedidoEmprestimo));
+}
 
     }
 

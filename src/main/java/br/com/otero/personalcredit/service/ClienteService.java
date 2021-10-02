@@ -1,5 +1,6 @@
 package br.com.otero.personalcredit.service;
 
+import br.com.otero.personalcredit.model.ClienteEValorPedido;
 import br.com.otero.personalcredit.model.ClienteResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -69,19 +70,27 @@ public class ClienteService {
     }
 
 
+    public ClienteEValorPedido emprestimo(String nome, Integer valorPedidoEmprestimo) {
+        ClienteResponse clienteResponse = buscaCliente(nome);
+        validacaoEmprestimo(valorPedidoEmprestimo,clienteResponse.getIdade());
+
+        return ClienteEValorPedido.builder()
+                .nome(clienteResponse.getNome())
+                .salario(clienteResponse.getSalario())
+                .valorPedido(BigDecimal.valueOf(valorPedidoEmprestimo))
+                .valorEmprestado(BigDecimal.valueOf(valorPedidoEmprestimo))
+                .qtdParcelas()
+                .build();
+    }
+    void validacaoEmprestimo(Integer valorPedidoEmprestimo,Integer idade) {
+    if(obterPorcentagemSalario(idade).compareTo(BigDecimal.valueOf(valorPedidoEmprestimo)) > -1){
+        throw new IllegalArgumentException("valor pedido maior do que pode ser emprestado");
+        }
+    }
+
+
   /*
 
-  Dependendo da faixa salarial da pessoa a parcela poderá comprometer apenas uma porcentagem do salário dela
-
-De 1000 a 2000 reais, a parcela poderá comprometer 5% do salário
-De 2001 a 3000 reais, a parcela poderá comprometer 10% do salário
-De 3001 a 4000 reais, a parcela poderá comprometer 15% do salário
-De 4001 a 5000 reais, a parcela poderá comprometer 20% do salário
-De 5001 a 6000 reais, a parcela poderá comprometer 25% do salário
-De 6001 a 7000 reais, a parcela poderá comprometer 30% do salário
-De 7001 a 8000 reais, a parcela poderá comprometer 35% do salário
-De 8001 a 9000 reais, a parcela poderá comprometer 40% do salário
-A partir de 9001 reais, a parcela poderá comprometer 45% do salário
 
   */
 
