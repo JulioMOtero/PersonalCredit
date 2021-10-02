@@ -35,7 +35,10 @@ public class ClienteController {
     }
     @GetMapping("/{nome}/{valorPedidoEmprestimo}")
     ResponseEntity<ClienteEValorPedido> clienteEValorPedido(@PathVariable String nome, @PathVariable Integer valorPedidoEmprestimo){
-
+        ClienteResponse busca = this.clienteService.buscaCliente(nome);
+        BigDecimal porcentagemSalario = this.clienteService.obterPorcentagemSalario(busca.getIdade());
+        BigDecimal valorMaxParcela = this.clienteService.valorMaxParcela(busca.getSalario());
+        BigDecimal calculaQuantidadeParcelas = this.clienteService.calculaQuantidadeParcelas(valorPedidoEmprestimo,busca.getSalario());
 
         return ResponseEntity.ok(this.clienteService.emprestimo(nome,valorPedidoEmprestimo));
 }

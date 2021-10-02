@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
+
+import static java.math.RoundingMode.HALF_UP;
 
 
 @Component
@@ -48,23 +49,23 @@ public class ClienteService {
     public BigDecimal valorMaxParcela(BigDecimal salarioCliente) {
 //        salarioCliente.setScale(2, RoundingMode.HALF_EVEN);
         if (salarioCliente.longValue() >= 1000.00  && salarioCliente.longValue()<= 2000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.05), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.05), new MathContext(2, HALF_UP));
         }else if(salarioCliente.longValue() >= 2001.00  && salarioCliente.longValue()<= 3000.00) {
-            return salarioCliente.multiply(BigDecimal.valueOf(0.10), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.10), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 3001.00  && salarioCliente.longValue()<= 4000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.15), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.15), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 4001.00  && salarioCliente.longValue()<= 5000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.20), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.20), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 5001.00  && salarioCliente.longValue()<= 6000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.25), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.25), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 6001.00  && salarioCliente.longValue()<= 7000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.30), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.30), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 7001.00  && salarioCliente.longValue()<= 8000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.35), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.35), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 8001.00  && salarioCliente.longValue()<= 9000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.40), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.40), new MathContext(2, HALF_UP));
         }else if (salarioCliente.longValue() >= 9001.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.45), new MathContext(2, RoundingMode.HALF_UP));
+            return salarioCliente.multiply(BigDecimal.valueOf(0.45), new MathContext(2, HALF_UP));
     }
         throw new RuntimeException("salario invalido");
     }
@@ -87,7 +88,10 @@ public class ClienteService {
         throw new IllegalArgumentException("valor pedido maior do que pode ser emprestado");
         }
     }
-
+    public BigDecimal calculaQuantidadeParcelas(Integer valorEmprestado, BigDecimal salarioCliente){
+        BigDecimal qtdParcelas = valorMaxParcela(salarioCliente).divide(BigDecimal.valueOf(valorEmprestado));
+        return  qtdParcelas;
+    }
 
   /*
 
