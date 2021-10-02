@@ -41,27 +41,28 @@ public class ClienteService {
 
         throw new RuntimeException("Idade invalida para emprestimo");
     }
-/*
-    public BigDecimal valorMaxParcela(BigDecimal salario) {
-        if (){
-            salario = salario.multiply(BigDecimal.valueOf(0.05));
-    }else if() {
-            salario = salario.multiply(BigDecimal.valueOf(0.10));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.15));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.20));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.25));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.30));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.35));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.40));
-        }else if (){
-        salario = salario.multiply(BigDecimal.valueOf(0.45));
-    }*/
+
+    public BigDecimal valorMaxParcela(BigDecimal salarioCliente) {
+        if (salarioCliente.longValue() >= 1000.00  && salarioCliente.longValue()<= 2000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.05));
+        }else if(salarioCliente.longValue() >= 2001.00  && salarioCliente.longValue()<= 3000.00) {
+            return salarioCliente.multiply(BigDecimal.valueOf(0.10));
+        }else if (salarioCliente.longValue() >= 3001.00  && salarioCliente.longValue()<= 4000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.15));
+        }else if (salarioCliente.longValue() >= 4001.00  && salarioCliente.longValue()<= 5000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.20));
+        }else if (salarioCliente.longValue() >= 5001.00  && salarioCliente.longValue()<= 6000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.25));
+        }else if (salarioCliente.longValue() >= 6001.00  && salarioCliente.longValue()<= 7000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.30));
+        }else if (salarioCliente.longValue() >= 7001.00  && salarioCliente.longValue()<= 8000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.35));
+        }else if (salarioCliente.longValue() >= 8001.00  && salarioCliente.longValue()<= 9000.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.40));
+        }else if (salarioCliente.longValue() >= 9001.00){
+            return salarioCliente.multiply(BigDecimal.valueOf(0.45));
+    }
+        throw new RuntimeException("salario invalido");
     }
 
 

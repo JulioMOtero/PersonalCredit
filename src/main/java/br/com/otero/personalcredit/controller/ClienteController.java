@@ -26,6 +26,9 @@ public class ClienteController {
         ClienteResponse busca = this.clienteService.buscaCliente(nome);
         BigDecimal porcentagemSalario = this.clienteService.obterPorcentagemSalario(busca.getIdade());
         BigDecimal valorMaxParcela = this.clienteService.valorMaxParcela(busca.getSalario());
+
+
+        System.out.println(valorMaxParcela);
         return ResponseEntity.ok().body(busca);
 
     }
