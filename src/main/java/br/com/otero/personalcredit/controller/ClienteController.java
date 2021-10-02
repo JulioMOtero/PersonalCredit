@@ -22,7 +22,7 @@ public class ClienteController {
 
 
     @GetMapping("/{nome}")
-    ResponseEntity<ClienteResponse> buscaCliente(@PathVariable String nome){
+    ResponseEntity<ClienteResponse> buscaCliente(@PathVariable String nome ){
         ClienteResponse busca = this.clienteService.buscaCliente(nome);
         BigDecimal porcentagemSalario = this.clienteService.obterPorcentagemSalario(busca.getIdade());
         BigDecimal valorMaxParcela = this.clienteService.valorMaxParcela(busca.getSalario());
