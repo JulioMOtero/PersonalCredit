@@ -41,25 +41,27 @@ Testes unitários
 Path: api/credito/{name}/{requestedValue}
 
 Response:
-{
-   "name": "string",
-   "salary": 1.0, -- BigDecimal
-   "requestedValue (valor pedido)": 1.0, -- BigDecimal
-   "loan (valorEmprestado)": 2.0, -- BigDecimal
-   "installments (quantidadeParcelas)": 4,  -- int
-   "value of installments (valorParcela)": 5.0 -- BigDecimal
-}
+
+      {
+         "name": "string",
+         "salary": 1.0, -- BigDecimal
+         "requestedValue (valor pedido)": 1.0, -- BigDecimal
+         "loan (valorEmprestado)": 2.0, -- BigDecimal
+         "installments (quantidadeParcelas)": 4,  -- int
+         "value of installments (valorParcela)": 5.0 -- BigDecimal
+      }
 
 
 9. A api terá que consultar uma api que responde na URL " http://www.mocky.io/v2/5e5ec624310000b738afd85a" e tem como response um objeto no formato abaixo
 
-[
-   {
-      "Name "string",
-      "Age": 0, -- int
-      "Salary": 1.0 -- decimal
-   }
-]
+
+      [
+         {
+            "Name "string",
+            "Age": 0, -- int
+            "Salary": 1.0 -- decimal
+         }
+      ]
 
 
 Obs:

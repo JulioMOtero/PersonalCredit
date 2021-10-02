@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -23,10 +24,12 @@ public class ClienteController {
     @GetMapping("/{nome}")
     ResponseEntity<ClienteResponse> buscaCliente(@PathVariable String nome){
         ClienteResponse busca = this.clienteService.buscaCliente(nome);
-
+        BigDecimal porcentagemSalario = this.clienteService.obterPorcentagemSalario(busca.getIdade());
+        BigDecimal valorMaxParcela = this.clienteService.valorMaxParcela(busca.getSalario());
         return ResponseEntity.ok().body(busca);
 
     }
+
 
     }
 
