@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 public class ClienteEValorPedido {
     @JsonProperty("Nome")
     private String nome;
-    @JsonProperty("Idade")
-    private Integer idade;
     @JsonProperty("Salario")
     private BigDecimal salario;
     private BigDecimal valorPedido;

@@ -35,11 +35,12 @@ public class ClienteController {
 
     }
     @GetMapping("/{nome}/{valorPedidoEmprestimo}")
-    ResponseEntity<ClienteEValorPedido> clienteEValorPedido(@PathVariable String nome, @PathVariable Integer valorPedidoEmprestimo){
-        ClienteResponse busca = this.clienteService.buscaCliente(nome);
-        BigDecimal valorMaxParcela = this.clienteService.valorMaxParcela(busca.getSalario());
-        BigDecimal obterPorcentagemSalario = this.clienteService.obterPorcentagemSalario(busca.getIdade());
-        Integer calculaQuantidadeParcelas = this.clienteService.calculaQuantidadeParcelas(valorPedidoEmprestimo,busca);
+    ResponseEntity<ClienteEValorPedido> clienteEValorPedido(@PathVariable String nome, @PathVariable BigDecimal valorPedidoEmprestimo){
+//        ClienteResponse busca = this.clienteService.buscaCliente(nome);
+//        BigDecimal valorMaxParcela = this.clienteService.valorMaxParcela(busca.getSalario());
+//        BigDecimal obterPorcentagemSalario = this.clienteService.obterPorcentagemSalario(busca.getIdade());
+//        Integer calculaQuantidadeParcelas = this.clienteService.calculaQuantidadeParcelas(valorPedidoEmprestimo,busca);
+//        BigDecimal calculaValorParcela = this.clienteService.calculaValorParcela(valorPedidoEmprestimo,busca);
 
         return ResponseEntity.ok(this.clienteService.emprestimo(nome,valorPedidoEmprestimo));
 }

@@ -25,11 +25,23 @@ public class ClienteService {
 
 
         Optional<ClienteResponse> resultado = lista.stream().filter(item -> item.getNome().equals(cliente)).findFirst();
-        if(resultado.isPresent()) {
-            obterPorcentagemSalario(resultado.get().getIdade());
-        }
+        resultado.ifPresent(clienteResponse -> obterPorcentagemSalario(clienteResponse.getIdade()));
         return resultado.orElse(null);
 
+    }
+
+    public ClienteEValorPedido emprestimo(String nome, BigDecimal valorPedidoEmprestimo) {
+        ClienteResponse clienteResponse = buscaCliente(nome);
+        validacaoEmprestimo(valorPedidoEmprestimo,clienteResponse);
+
+        return ClienteEValorPedido.builder()
+                .nome(clienteResponse.getNome())
+                .salario(clienteResponse.getSalario())
+                .valorPedido(valorPedidoEmprestimo)
+                .valorEmprestado(valorPedidoEmprestimo)
+                .qtdParcelas(calculaQuantidadeParcelas(valorPedidoEmprestimo,clienteResponse))
+                .valorDasParcelas(calculaValorParcela(valorPedidoEmprestimo,clienteResponse))
+                .build();
     }
 
     public BigDecimal obterPorcentagemSalario(Integer idadeCliente) {
@@ -43,12 +55,10 @@ public class ClienteService {
         } else if (idadeCliente >= 80) {
             return BigDecimal.valueOf(0.20);
         }
-
         throw new RuntimeException("Idade invalida para emprestimo");
     }
 
     public BigDecimal valorMaxParcela(BigDecimal salarioCliente) {
-//        salarioCliente.setScale(2, RoundingMode.HALF_EVEN);
         if (salarioCliente.longValue() >= 1000.00  && salarioCliente.longValue()<= 2000.00){
             return salarioCliente.multiply(BigDecimal.valueOf(0.05), new MathContext(6, HALF_UP));
         }else if(salarioCliente.longValue() >= 2001.00  && salarioCliente.longValue()<= 3000.00) {
@@ -71,33 +81,30 @@ public class ClienteService {
         throw new RuntimeException("salario invalido");
     }
 
+    void validacaoEmprestimo(BigDecimal valorPedidoEmprestimo,ClienteResponse cliente) {
+//        BigDecimal porcentagemSalarioXvalorPedido = obterPorcentagemSalario(cliente.getIdade()).multiply(valorPedidoEmprestimo);
+//        if(porcentagemSalarioXvalorPedido.compareTo(valorMaxParcela(cliente.getSalario())) == 1){
+//        throw new IllegalArgumentException("valor pedido maior do que pode ser emprestado");
+//        }//parcela do emprestimo nao pode ser maior que % do salario
+//==============================================================================================================parece que funcionou
+      BigDecimal resultado = cliente.getSalario().multiply(obterPorcentagemSalario(cliente.getIdade()));
+      if(resultado.compareTo(cliente.getSalario())==1 || cliente.getSalario().compareTo(valorPedidoEmprestimo)==-1){
+          throw new IllegalArgumentException("valor pedido não pode ser emprestado");
+      }
 
-    public ClienteEValorPedido emprestimo(String nome, Integer valorPedidoEmprestimo) {
-        ClienteResponse clienteResponse = buscaCliente(nome);
-        validacaoEmprestimo(valorPedidoEmprestimo,clienteResponse.getIdade());
-
-        return ClienteEValorPedido.builder()
-                .nome(clienteResponse.getNome())
-                .salario(clienteResponse.getSalario())
-                .valorPedido(BigDecimal.valueOf(valorPedidoEmprestimo))
-                .valorEmprestado(BigDecimal.valueOf(valorPedidoEmprestimo))
-                .qtdParcelas(calculaQuantidadeParcelas(valorPedidoEmprestimo,clienteResponse))
-
-                        .build();
     }
-    void validacaoEmprestimo(Integer valorPedidoEmprestimo,Integer idade) {
-    if(obterPorcentagemSalario(idade).compareTo(BigDecimal.valueOf(valorPedidoEmprestimo)) > -1){
-        throw new IllegalArgumentException("valor pedido maior do que pode ser emprestado");
-        }
-    }
-    public Integer calculaQuantidadeParcelas(Integer valorEmprestado,ClienteResponse cliente){
-        validacaoEmprestimo(valorEmprestado,cliente.getIdade());
-        BigDecimal valorParcela = valorMaxParcela(cliente.getSalario());
-
-        return valorEmprestado / valorParcela;
-//        return valorParcela.divide(BigDecimal.valueOf(valorEmprestado),UP).intValue();
+    public Integer calculaQuantidadeParcelas(BigDecimal valorEmprestado,ClienteResponse cliente){
+        validacaoEmprestimo(valorEmprestado,cliente);
+        BigDecimal valorMaxParcela = valorMaxParcela(cliente.getSalario());
+        return valorEmprestado.divide(valorMaxParcela,UP).intValue();
     }
 
+
+    public BigDecimal calculaValorParcela(BigDecimal valorEmprestado, ClienteResponse cliente){
+        calculaQuantidadeParcelas(valorEmprestado,cliente);
+                validacaoEmprestimo(valorEmprestado,cliente);
+        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado,cliente)));
+    }
   /*
 
 
