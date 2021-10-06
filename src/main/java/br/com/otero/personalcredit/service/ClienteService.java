@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -110,7 +111,7 @@ public class ClienteService {
                 .filter(regra -> salarioCliente.longValue() >= regra.getValorInicial() && salarioCliente.longValue() <= regra.getValorFinal())
                 .findFirst()
                 .orElseThrow(() -> new SalarioException("salario invalido"));
-            return regraEscolhida.getPorcentagem();
+            return salarioCliente.multiply(regraEscolhida.getPorcentagem());
     }
 
     void validacaoEmprestimo(BigDecimal valorPedidoEmprestimo, ClienteResponse cliente) {
@@ -125,13 +126,14 @@ public class ClienteService {
         validacaoEmprestimo(valorEmprestado, cliente);
         BigDecimal valorMaxParcela = valorMaxParcela(cliente.getSalario());
         return valorEmprestado.divide(valorMaxParcela, UP).intValue();
+
     }
 
 
     public BigDecimal calculaValorParcela(BigDecimal valorEmprestado, ClienteResponse cliente) {
         calculaQuantidadeParcelas(valorEmprestado, cliente);
         validacaoEmprestimo(valorEmprestado, cliente);
-        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado, cliente)), UP);
+        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado, cliente)),new MathContext(6,UP));
     }
 
 }
