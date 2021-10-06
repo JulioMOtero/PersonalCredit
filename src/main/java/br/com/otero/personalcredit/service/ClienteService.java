@@ -1,5 +1,8 @@
 package br.com.otero.personalcredit.service;
 
+import br.com.otero.personalcredit.exception.PessoaNaoEncontradaException;
+import br.com.otero.personalcredit.exception.IdadeException;
+import br.com.otero.personalcredit.exception.SalarioException;
 import br.com.otero.personalcredit.model.ClienteEValorPedido;
 import br.com.otero.personalcredit.model.ClienteResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,8 @@ public class ClienteService {
 
         Optional<ClienteResponse> resultado = lista.stream().filter(item -> item.getNome().equals(cliente)).findFirst();
         resultado.ifPresent(clienteResponse -> obterPorcentagemSalario(clienteResponse.getIdade()));
-        return resultado.orElse(null);
+        return resultado.orElseThrow(()-> new PessoaNaoEncontradaException("Nome não encontrado"));
+
 
     }
 
@@ -55,7 +59,7 @@ public class ClienteService {
         } else if (idadeCliente >= 80) {
             return BigDecimal.valueOf(0.20);
         }
-        throw new RuntimeException("Idade invalida para emprestimo");
+        throw new IdadeException("Idade invalida para emprestimo");
     }
 
     public BigDecimal valorMaxParcela(BigDecimal salarioCliente) {
@@ -78,7 +82,7 @@ public class ClienteService {
         }else if (salarioCliente.longValue() >= 9001.00){
             return salarioCliente.multiply(BigDecimal.valueOf(0.45), new MathContext(2, HALF_UP));
     }
-        throw new RuntimeException("salario invalido");
+        throw new SalarioException("salario invalido");
     }
 
     void validacaoEmprestimo(BigDecimal valorPedidoEmprestimo,ClienteResponse cliente) {
@@ -98,7 +102,7 @@ public class ClienteService {
     public BigDecimal calculaValorParcela(BigDecimal valorEmprestado, ClienteResponse cliente){
         calculaQuantidadeParcelas(valorEmprestado,cliente);
                 validacaoEmprestimo(valorEmprestado,cliente);
-        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado,cliente)));
+        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado,cliente)),UP);
     }
 
 }
