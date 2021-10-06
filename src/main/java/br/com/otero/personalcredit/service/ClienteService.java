@@ -82,13 +82,8 @@ public class ClienteService {
     }
 
     void validacaoEmprestimo(BigDecimal valorPedidoEmprestimo,ClienteResponse cliente) {
-//        BigDecimal porcentagemSalarioXvalorPedido = obterPorcentagemSalario(cliente.getIdade()).multiply(valorPedidoEmprestimo);
-//        if(porcentagemSalarioXvalorPedido.compareTo(valorMaxParcela(cliente.getSalario())) == 1){
-//        throw new IllegalArgumentException("valor pedido maior do que pode ser emprestado");
-//        }//parcela do emprestimo nao pode ser maior que % do salario
-//==============================================================================================================parece que funcionou
       BigDecimal resultado = cliente.getSalario().multiply(obterPorcentagemSalario(cliente.getIdade()));
-      if(resultado.compareTo(cliente.getSalario())==1 || cliente.getSalario().compareTo(valorPedidoEmprestimo)==-1){
+      if(resultado.compareTo(cliente.getSalario()) > 0 || cliente.getSalario().compareTo(valorPedidoEmprestimo) < 0){
           throw new IllegalArgumentException("valor pedido não pode ser emprestado");
       }
 
@@ -105,9 +100,5 @@ public class ClienteService {
                 validacaoEmprestimo(valorEmprestado,cliente);
         return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado,cliente)));
     }
-  /*
-
-
-  */
 
 }
