@@ -5,15 +5,17 @@ import br.com.otero.personalcredit.exception.IdadeException;
 import br.com.otero.personalcredit.exception.SalarioException;
 import br.com.otero.personalcredit.model.ClienteEValorPedido;
 import br.com.otero.personalcredit.model.ClienteResponse;
+import br.com.otero.personalcredit.model.ValorMaxParcela;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.math.RoundingMode.HALF_UP;
+
 import static java.math.RoundingMode.UP;
 
 
@@ -23,28 +25,68 @@ public class ClienteService {
     @Autowired
     FeignClientService feignClientService;
 
+   private static final List<ValorMaxParcela> regraComprometimentoSalario = new ArrayList<>();
+    static {
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(1000)
+                .valorFinal(2000)
+                .porcentagem(BigDecimal.valueOf(0.05)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(2001)
+                .valorFinal(3000)
+                .porcentagem(BigDecimal.valueOf(0.10)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(3001)
+                .valorFinal(4000)
+                .porcentagem(BigDecimal.valueOf(0.15)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(4001)
+                .valorFinal(5000)
+                .porcentagem(BigDecimal.valueOf(0.20)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(5001)
+                .valorFinal(6000)
+                .porcentagem(BigDecimal.valueOf(0.25)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(6001)
+                .valorFinal(7000)
+                .porcentagem(BigDecimal.valueOf(0.30)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(7001)
+                .valorFinal(8000)
+                .porcentagem(BigDecimal.valueOf(0.35)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(8001)
+                .valorFinal(9000)
+                .porcentagem(BigDecimal.valueOf(0.40)).build());
+        regraComprometimentoSalario.add(ValorMaxParcela.builder()
+                .valorInicial(9001)
+                .valorFinal(null)
+                .porcentagem(BigDecimal.valueOf(0.45)).build());
+
+    }
     public ClienteResponse buscaCliente(String cliente) {
         List<ClienteResponse> lista = feignClientService.buscaCliente();
 
 
         Optional<ClienteResponse> resultado = lista.stream().filter(item -> item.getNome().equals(cliente)).findFirst();
         resultado.ifPresent(clienteResponse -> obterPorcentagemSalario(clienteResponse.getIdade()));
-        return resultado.orElseThrow(()-> new PessoaNaoEncontradaException("Nome não encontrado"));
+        return resultado.orElseThrow(() -> new PessoaNaoEncontradaException("Nome não encontrado"));
 
 
     }
 
     public ClienteEValorPedido emprestimo(String nome, BigDecimal valorPedidoEmprestimo) {
         ClienteResponse clienteResponse = buscaCliente(nome);
-        validacaoEmprestimo(valorPedidoEmprestimo,clienteResponse);
+        validacaoEmprestimo(valorPedidoEmprestimo, clienteResponse);
 
         return ClienteEValorPedido.builder()
                 .nome(clienteResponse.getNome())
                 .salario(clienteResponse.getSalario())
                 .valorPedido(valorPedidoEmprestimo)
                 .valorEmprestado(valorPedidoEmprestimo)
-                .qtdParcelas(calculaQuantidadeParcelas(valorPedidoEmprestimo,clienteResponse))
-                .valorDasParcelas(calculaValorParcela(valorPedidoEmprestimo,clienteResponse))
+                .qtdParcelas(calculaQuantidadeParcelas(valorPedidoEmprestimo, clienteResponse))
+                .valorDasParcelas(calculaValorParcela(valorPedidoEmprestimo, clienteResponse))
                 .build();
     }
 
@@ -63,46 +105,33 @@ public class ClienteService {
     }
 
     public BigDecimal valorMaxParcela(BigDecimal salarioCliente) {
-        if (salarioCliente.longValue() >= 1000.00  && salarioCliente.longValue()<= 2000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.05), new MathContext(6, HALF_UP));
-        }else if(salarioCliente.longValue() >= 2001.00  && salarioCliente.longValue()<= 3000.00) {
-            return salarioCliente.multiply(BigDecimal.valueOf(0.10), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 3001.00  && salarioCliente.longValue()<= 4000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.15), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 4001.00  && salarioCliente.longValue()<= 5000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.20), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 5001.00  && salarioCliente.longValue()<= 6000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.25), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 6001.00  && salarioCliente.longValue()<= 7000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.30), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 7001.00  && salarioCliente.longValue()<= 8000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.35), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 8001.00  && salarioCliente.longValue()<= 9000.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.40), new MathContext(6, HALF_UP));
-        }else if (salarioCliente.longValue() >= 9001.00){
-            return salarioCliente.multiply(BigDecimal.valueOf(0.45), new MathContext(2, HALF_UP));
-    }
-        throw new SalarioException("salario invalido");
+
+        ValorMaxParcela regraEscolhida = regraComprometimentoSalario.stream()
+                .filter(regra -> salarioCliente.longValue() >= regra.getValorInicial() && salarioCliente.longValue() <= regra.getValorFinal())
+                .findFirst()
+                .orElseThrow(() -> new SalarioException("salario invalido"));
+            return regraEscolhida.getPorcentagem();
     }
 
-    void validacaoEmprestimo(BigDecimal valorPedidoEmprestimo,ClienteResponse cliente) {
-      BigDecimal resultado = cliente.getSalario().multiply(obterPorcentagemSalario(cliente.getIdade()));
-      if(resultado.compareTo(cliente.getSalario()) > 0 || cliente.getSalario().compareTo(valorPedidoEmprestimo) < 0){
-          throw new IllegalArgumentException("valor pedido não pode ser emprestado");
-      }
+    void validacaoEmprestimo(BigDecimal valorPedidoEmprestimo, ClienteResponse cliente) {
+        BigDecimal resultado = cliente.getSalario().multiply(obterPorcentagemSalario(cliente.getIdade()));
+        if (resultado.compareTo(cliente.getSalario()) > 0 || cliente.getSalario().compareTo(valorPedidoEmprestimo) < 0) {
+            throw new IllegalArgumentException("valor pedido não pode ser emprestado");
+        }
 
     }
-    public Integer calculaQuantidadeParcelas(BigDecimal valorEmprestado,ClienteResponse cliente){
-        validacaoEmprestimo(valorEmprestado,cliente);
+
+    public Integer calculaQuantidadeParcelas(BigDecimal valorEmprestado, ClienteResponse cliente) {
+        validacaoEmprestimo(valorEmprestado, cliente);
         BigDecimal valorMaxParcela = valorMaxParcela(cliente.getSalario());
-        return valorEmprestado.divide(valorMaxParcela,UP).intValue();
+        return valorEmprestado.divide(valorMaxParcela, UP).intValue();
     }
 
 
-    public BigDecimal calculaValorParcela(BigDecimal valorEmprestado, ClienteResponse cliente){
-        calculaQuantidadeParcelas(valorEmprestado,cliente);
-                validacaoEmprestimo(valorEmprestado,cliente);
-        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado,cliente)),UP);
+    public BigDecimal calculaValorParcela(BigDecimal valorEmprestado, ClienteResponse cliente) {
+        calculaQuantidadeParcelas(valorEmprestado, cliente);
+        validacaoEmprestimo(valorEmprestado, cliente);
+        return valorEmprestado.divide(new BigDecimal(calculaQuantidadeParcelas(valorEmprestado, cliente)), UP);
     }
 
 }
